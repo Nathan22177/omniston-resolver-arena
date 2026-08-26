@@ -184,7 +184,7 @@ function buildGraph(rows, capture, mobile) {
     const youId = `resolver:${YOU}`;
     addNode(sourceId, "source", row.src);
     addNode(destinationId, "destination", row.dst);
-    addNode(resolverId, "resolver", row.resolver);
+    if (capture < 1) addNode(resolverId, "resolver", row.resolver);
     if (capture > 0) addNode(youId, "resolver", YOU);
     const capturedVolume = row.volume * capture;
     const capturedOrders = row.orders * capture;

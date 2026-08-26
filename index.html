@@ -23,6 +23,7 @@
         <span id="window-label">Historical window: —</span>
         <span id="retrieved-label">Retrieved: —</span>
       </div>
+      <p id="chart-description" class="disclaimer">This is a historical replay, not a forecast. “You” shows a theoretical share of finalized flow. Gross spread excludes gas, hedging, inventory, and settlement costs.</p>
     </header>
 
     <section class="coverage-grid" aria-label="Chain coverage">
@@ -41,7 +42,7 @@
     <section class="controls-grid" aria-label="Scenario assumptions">
       <label class="range-control">
         <span>Assumed capture <output id="capture-output">10%</output></span>
-        <input id="capture" type="range" min="0" max="50" step="1" value="10">
+        <input id="capture" type="range" min="0" max="100" step="1" value="10">
       </label>
       <label class="range-control">
         <span>Gross margin <output id="margin-output">25 bp</output></span>
@@ -81,7 +82,6 @@
       </div>
       <div id="chart-empty" class="chart-empty" hidden>Select at least one matching route to draw the flow.</div>
       <svg id="sankey" role="img" aria-labelledby="flow-title chart-description"></svg>
-      <p id="chart-description" class="method-note">Solid flows come from finalized orders in the Omniston History API. “You” is a replay scenario, not a forecast. Gross spread excludes gas, hedging, inventory, and settlement costs.</p>
     </section>
   </main>
   <div id="tooltip" class="tooltip" role="status" hidden></div>
