@@ -12,11 +12,12 @@
   --accent-soft: rgba(10, 149, 255, .13);
   --success: #57cf84;
   --side-node: #62666d;
-  --series-1: #3888e8;
-  --series-2: #e6934b;
-  --series-3: #55bf85;
-  --series-4: #b86ab7;
-  --series-5: #736bd6;
+  --series-1: #3d264b;
+  --series-2: #654080;
+  --series-3: #8d5ab4;
+  --series-4: #b575e8;
+  --series-5: #d8a4ff;
+  --series-you: #0a95ff;
   --series-other: #777c84;
 }
 

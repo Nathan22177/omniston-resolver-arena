@@ -240,17 +240,26 @@ function renderChart(rows) {
   const laidOut = sankey({ nodes: graph.nodes.map(d => ({ ...d })), links: graph.links.map(d => ({ ...d })) });
   svg.attr("viewBox", `0 0 ${width} ${height}`).attr("height", height);
 
-  const resolverOrder = [...new Set(laidOut.nodes.filter(node => node.kind === "resolver" && node.raw !== YOU && node.raw !== OTHER).map(node => node.raw))];
-  const palette = [css("--series-1"), css("--series-2"), css("--series-3"), css("--series-4"), css("--series-5")];
-  const resolverColor = resolver => resolver === YOU ? css("--accent") : resolver === OTHER ? css("--series-other") : palette[Math.max(0, resolverOrder.indexOf(resolver)) % palette.length];
+  const incumbentNodes = laidOut.nodes.filter(node => node.kind === "resolver" && node.raw !== YOU && node.raw !== OTHER);
+  const incumbentVolumes = new Map(incumbentNodes.map(node => [node.raw, node.value]));
+  const totalIncumbentVolume = d3.sum(incumbentNodes, node => node.value);
+  const incumbentColor = d3.scaleLinear()
+    .domain([0, 1])
+    .range([css("--series-1"), css("--series-5")])
+    .interpolate(d3.interpolateLab)
+    .clamp(true);
+  const resolverColor = resolver => resolver === YOU
+    ? css("--series-you")
+    : resolver === OTHER
+      ? css("--series-other")
+      : incumbentColor(totalIncumbentVolume > 0 ? incumbentVolumes.get(resolver) / totalIncumbentVolume : 0);
 
-  svg.append("g").attr("fill", "none").selectAll("path").data(laidOut.links).join("path")
-    .attr("d", d3.sankeyLinkHorizontal()).attr("stroke", d => resolverColor(d.resolver)).attr("stroke-opacity", .42).attr("stroke-width", d => Math.max(1, d.width))
-    .on("pointermove", (event, d) => showTooltip(event, `${d.source.label} → ${d.target.label}<br>${money.format(d.value)} · ≈ ${integer.format(d.orders)} orders`))
-    .on("pointerleave", hideTooltip);
+  const link = svg.append("g").attr("fill", "none").selectAll("path").data(laidOut.links).join("path")
+    .attr("d", d3.sankeyLinkHorizontal()).attr("stroke", d => resolverColor(d.resolver)).attr("stroke-opacity", .42).attr("stroke-width", d => Math.max(1, d.width));
 
   const node = svg.append("g").selectAll("g").data(laidOut.nodes).join("g")
-    .on("pointermove", (event, d) => showTooltip(event, `${d.label}<br>${money.format(d.value)}`)).on("pointerleave", hideTooltip);
+    .attr("tabindex", d => d.kind === "resolver" ? 0 : null)
+    .attr("aria-label", d => d.kind === "resolver" ? `${d.label}, ${money.format(d.value)}` : null);
   node.append("rect").attr("x", d => d.x0).attr("y", d => d.y0).attr("width", d => d.x1 - d.x0).attr("height", d => Math.max(1, d.y1 - d.y0)).attr("rx", 2)
     .attr("fill", d => d.kind === "resolver" ? resolverColor(d.raw) : css("--side-node"));
   node.filter(d => d.y1 - d.y0 >= 9).append("text")
@@ -260,6 +269,30 @@ function renderChart(rows) {
     .attr("fill", css("--text")).attr("stroke", css("--bg")).attr("stroke-width", 2).attr("paint-order", "stroke")
     .attr("font-family", "Inter, Verdana, sans-serif").attr("font-size", mobile ? 10 : 11).attr("font-weight", d => d.raw === YOU ? 600 : 500)
     .text(d => d.label);
+
+  const highlightResolver = resolver => {
+    link.attr("stroke-opacity", d => d.resolver === resolver ? .9 : .07);
+    node.attr("opacity", d => d.kind !== "resolver" || d.raw === resolver ? 1 : .2);
+    node.select("rect")
+      .attr("stroke", d => d.kind === "resolver" && d.raw === resolver ? css("--text") : "none")
+      .attr("stroke-width", d => d.kind === "resolver" && d.raw === resolver ? 2 : 0);
+  };
+  const resetResolverHighlight = () => {
+    link.attr("stroke-opacity", .42);
+    node.attr("opacity", 1);
+    node.select("rect").attr("stroke", "none").attr("stroke-width", 0);
+  };
+
+  link
+    .on("pointerenter", (_, d) => highlightResolver(d.resolver))
+    .on("pointermove", (event, d) => showTooltip(event, `${d.source.label} → ${d.target.label}<br>${money.format(d.value)} · ≈ ${integer.format(d.orders)} orders`))
+    .on("pointerleave", () => { resetResolverHighlight(); hideTooltip(); });
+  node
+    .on("pointerenter", (_, d) => { if (d.kind === "resolver") highlightResolver(d.raw); })
+    .on("pointermove", (event, d) => showTooltip(event, `${d.label}<br>${money.format(d.value)}`))
+    .on("pointerleave", () => { resetResolverHighlight(); hideTooltip(); })
+    .on("focus", (_, d) => { if (d.kind === "resolver") highlightResolver(d.raw); })
+    .on("blur", resetResolverHighlight);
 }
 
 function showTooltip(event, html) {
