@@ -3,85 +3,107 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark light">
+  <meta name="color-scheme" content="dark">
   <meta name="description" content="Explore how much Omniston flow a new resolver could compete for across source and destination chains.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; connect-src https://omni-history.ston.fi; img-src 'self' data:; object-src 'none'; base-uri 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://omni-history.ston.fi; img-src 'self' data:; object-src 'none'; base-uri 'none'">
   <title>Omniston Resolver Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;600;700&display=swap">
   <link rel="stylesheet" href="styles.css">
   <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="https://app.ston.fi/" target="_blank" rel="noopener noreferrer" aria-label="Open STON.fi App">
+        <img src="assets/stonfi-logo.svg" width="107" height="32" alt="STON.fi">
+      </a>
+      <a class="app-link" href="https://docs.ston.fi/developer-section/omniston/resolvers/guide" target="_blank" rel="noopener noreferrer">Become a resolver</a>
+    </div>
+  </header>
+
   <main class="site-shell">
-    <header class="hero">
-      <p class="eyebrow">LIVE 31-DAY REPLAY</p>
-      <h1>Become the next resolver</h1>
-      <p class="lede">Pick the chains you can serve, undercut the winning quotes, and see the historical flow that could have been yours.</p>
-      <div class="snapshot" aria-live="polite">
-        <span id="data-status" class="status-pill">Loading production history…</span>
-        <span id="window-label">Historical window: —</span>
-        <span id="retrieved-label">Retrieved: —</span>
-      </div>
-      <p id="chart-description" class="disclaimer">This is a historical replay, not a forecast. “You” shows a theoretical share of finalized flow. Gross spread excludes gas, hedging, inventory, and settlement costs.</p>
-    </header>
-
-    <section class="coverage-grid" aria-label="Chain coverage">
-      <fieldset>
-        <legend>Where do you hold liquidity?</legend>
-        <p class="field-hint">Source chains</p>
-        <div id="source-chains" class="chip-list"></div>
-      </fieldset>
-      <fieldset>
-        <legend>Where can you deliver?</legend>
-        <p class="field-hint">Destination chains</p>
-        <div id="destination-chains" class="chip-list"></div>
-      </fieldset>
-    </section>
-
-    <section class="controls-grid" aria-label="Scenario assumptions">
-      <label class="range-control">
-        <span>Assumed capture <output id="capture-output">10%</output></span>
-        <input id="capture" type="range" min="0" max="100" step="1" value="10">
-      </label>
-      <label class="range-control">
-        <span>Gross margin <output id="margin-output">25 bp</output></span>
-        <input id="margin" type="range" min="0" max="100" step="1" value="25">
-      </label>
-      <label class="range-control">
-        <span>Give back to trader <output id="give-output">5 bp</output></span>
-        <input id="give" type="range" min="0" max="100" step="1" value="5">
-      </label>
-    </section>
-
-    <section class="metrics-grid" aria-label="Scenario results">
-      <article class="metric-card">
-        <p>Addressable historical flow</p>
-        <strong id="addressable-volume">—</strong>
-        <span id="addressable-orders">— finalized orders</span>
-      </article>
-      <article class="metric-card accent-card">
-        <p>Your scenario volume</p>
-        <strong id="scenario-volume">—</strong>
-        <span id="scenario-orders">— orders</span>
-      </article>
-      <article class="metric-card">
-        <p>Potential gross spread</p>
-        <strong id="gross-spread">—</strong>
-        <span id="spread-detail">—</span>
-      </article>
-    </section>
-
-    <section class="chart-card" aria-labelledby="flow-title">
-      <div class="chart-heading">
-        <div>
-          <p class="eyebrow">HISTORICAL COMPETITION</p>
-          <h2 id="flow-title">Where your flow comes from</h2>
+    <aside class="config-panel">
+      <header class="hero">
+        <p class="eyebrow">OPPORTUNITY CONSOLE</p>
+        <h1>Become the next resolver</h1>
+        <p class="lede">Choose where you can compete and replay the flow that could have been yours.</p>
+        <div class="snapshot" aria-live="polite">
+          <div class="snapshot-row">
+            <span id="data-status" class="status-pill">Loading production history…</span>
+            <span class="window-size">31-day history</span>
+          </div>
+          <span id="window-label">Historical window: —</span>
+          <span id="retrieved-label">Retrieved: —</span>
         </div>
-        <p id="resolver-count">— active resolver IDs</p>
-      </div>
-      <div id="chart-empty" class="chart-empty" hidden>Select at least one matching route to draw the flow.</div>
-      <svg id="sankey" role="img" aria-labelledby="flow-title chart-description"></svg>
+        <p id="chart-description" class="disclaimer">This is a historical replay, not a forecast. “You” shows a theoretical share of finalized flow. Gross spread excludes gas, hedging, inventory, and settlement costs.</p>
+      </header>
+
+      <section class="coverage-grid" aria-label="Chain coverage">
+        <fieldset>
+          <legend>Where do you hold liquidity?</legend>
+          <p class="field-hint">Source chains</p>
+          <div id="source-chains" class="chip-list"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Where can you deliver?</legend>
+          <p class="field-hint">Destination chains</p>
+          <div id="destination-chains" class="chip-list"></div>
+        </fieldset>
+      </section>
+
+    </aside>
+
+    <section class="workspace" aria-label="Resolver opportunity analysis">
+      <section class="controls-grid" aria-label="Scenario assumptions">
+        <label class="range-control">
+          <span>Assumed capture <output id="capture-output">10%</output></span>
+          <input id="capture" type="range" min="0" max="100" step="1" value="10">
+          <small><span>0%</span><span>100%</span></small>
+        </label>
+        <label class="range-control">
+          <span>Gross margin <output id="margin-output">25 bp</output></span>
+          <input id="margin" type="range" min="0" max="100" step="1" value="25">
+          <small><span>0 bp</span><span>100 bp</span></small>
+        </label>
+        <label class="range-control">
+          <span>Give back to trader <output id="give-output">5 bp</output></span>
+          <input id="give" type="range" min="0" max="100" step="1" value="5">
+          <small><span>0 bp</span><span>100 bp</span></small>
+        </label>
+      </section>
+      <section class="metrics-grid" aria-label="Scenario results">
+        <article class="metric-card">
+          <p>Addressable historical flow</p>
+          <strong id="addressable-volume">—</strong>
+          <span id="addressable-orders">— finalized orders</span>
+        </article>
+        <article class="metric-card">
+          <p>Your scenario volume</p>
+          <strong id="scenario-volume">—</strong>
+          <span id="scenario-orders">— orders</span>
+        </article>
+        <article class="metric-card accent-card">
+          <p>Potential gross spread</p>
+          <strong id="gross-spread">—</strong>
+          <span id="spread-detail">—</span>
+        </article>
+      </section>
+
+      <section class="chart-card" aria-labelledby="flow-title">
+        <div class="chart-heading">
+          <div>
+            <p class="eyebrow">HISTORICAL COMPETITION</p>
+            <h2 id="flow-title">Sources → resolvers → destinations</h2>
+          </div>
+          <p id="resolver-count">— active resolver IDs</p>
+        </div>
+        <div id="chart-empty" class="chart-empty" hidden>Select at least one matching route to draw the flow.</div>
+        <svg id="sankey" role="img" aria-labelledby="flow-title chart-description"></svg>
+      </section>
     </section>
   </main>
   <div id="tooltip" class="tooltip" role="status" hidden></div>

@@ -6,6 +6,18 @@ const FALLBACK_TO = 1787735220;
 const FALLBACK_RETRIEVED = "2026-08-26 09:07 UTC";
 const YOU = "__you__";
 const OTHER = "__other__";
+const CHAIN_ICONS = {
+  ton: "assets/ton.svg",
+  bnb: "assets/bnb.svg",
+  ethereum: "assets/ethereum.svg",
+  polygon: "assets/polygon.svg",
+  arbitrum: "assets/arbitrum.svg",
+  base: "assets/base.svg",
+  tron: "assets/tron.svg",
+  avalanche: "assets/avalanche.svg",
+  robinhood: "assets/robinhood.svg",
+  xlayer: "assets/xlayer.svg"
+};
 
 const FALLBACK_ROWS = [
   ["ton","ton","EQC7ND-pWJBHwN76wGLCr1mQ6zJoqKDBe7GDOoplIIND9S7V",3898729.6143920855,1776],
@@ -44,7 +56,7 @@ const state = {
 const $ = id => document.getElementById(id);
 const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 const integer = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
-const titleCase = value => value === OTHER ? "Other" : value.charAt(0).toUpperCase() + value.slice(1);
+const titleCase = value => value === OTHER ? "Other" : value === "xlayer" ? "X Layer" : value.charAt(0).toUpperCase() + value.slice(1);
 const formatUtc = seconds => `${new Date(seconds * 1000).toISOString().slice(0, 16).replace("T", " ")} UTC`;
 const shortResolver = id => id === OTHER ? "Other resolvers" : id.length > 14 ? `${id.slice(0, 5)}…${id.slice(-4)}` : id;
 
@@ -114,7 +126,14 @@ function buildChips(containerId, values, selected) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "chain-chip";
-    button.textContent = titleCase(value);
+    if (CHAIN_ICONS[value]) {
+      const icon = document.createElement("img");
+      icon.src = CHAIN_ICONS[value];
+      icon.alt = "";
+      icon.dataset.chain = value;
+      button.append(icon);
+    }
+    button.append(document.createTextNode(titleCase(value)));
     button.setAttribute("aria-pressed", "true");
     button.addEventListener("click", () => {
       selected.has(value) ? selected.delete(value) : selected.add(value);
@@ -214,8 +233,8 @@ function renderChart(rows) {
   empty.hidden = true;
   const width = Math.max(292, Math.floor($("sankey").getBoundingClientRect().width));
   const mobile = width < 620;
-  const height = mobile ? 470 : 480;
-  const sideMargin = mobile ? Math.min(76, width * .2) : 92;
+  const height = mobile ? 470 : 590;
+  const sideMargin = mobile ? 10 : 16;
   const graph = buildGraph(rows, state.capture / 100, mobile);
   const sankey = d3.sankey().nodeId(d => d.id).nodeWidth(mobile ? 12 : 14).nodePadding(mobile ? 12 : 14).nodeSort(null).extent([[sideMargin, 12], [width - sideMargin, height - 12]]);
   const laidOut = sankey({ nodes: graph.nodes.map(d => ({ ...d })), links: graph.links.map(d => ({ ...d })) });
@@ -238,7 +257,8 @@ function renderChart(rows) {
     .attr("x", d => d.kind === "destination" ? d.x0 - 7 : d.x1 + 7)
     .attr("y", d => (d.y0 + d.y1) / 2).attr("dy", ".35em")
     .attr("text-anchor", d => d.kind === "destination" ? "end" : "start")
-    .attr("fill", css("--text")).attr("font-size", mobile ? 10 : 11).attr("font-weight", d => d.raw === YOU ? 800 : 650)
+    .attr("fill", css("--text")).attr("stroke", css("--bg")).attr("stroke-width", 2).attr("paint-order", "stroke")
+    .attr("font-family", "Inter, Verdana, sans-serif").attr("font-size", mobile ? 10 : 11).attr("font-weight", d => d.raw === YOU ? 600 : 500)
     .text(d => d.label);
 }
 
