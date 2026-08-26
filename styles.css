@@ -1,0 +1,98 @@
+:root {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --surface: #151b23;
+  --border: #2b3644;
+  --text: #f4f7fb;
+  --muted: #98a5b5;
+  --accent: #68ddca;
+  --accent-soft: rgba(104, 221, 202, .14);
+  --side-node: #8391a1;
+  --series-1: #75bfff;
+  --series-2: #ff9a5c;
+  --series-3: #72df91;
+  --series-4: #ed84ba;
+  --series-5: #c69bff;
+  --series-other: #9aa6b3;
+  --shadow: 0 24px 70px rgba(0, 0, 0, .22);
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; }
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background: radial-gradient(circle at 12% 0%, rgba(104, 221, 202, .09), transparent 30rem), var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+button, input { font: inherit; }
+.site-shell { width: min(100%, 1240px); margin: 0 auto; padding: clamp(24px, 4vw, 56px) clamp(16px, 3vw, 36px) 48px; }
+.hero { max-width: 850px; }
+.eyebrow { margin: 0 0 8px; color: var(--accent); font-size: .74rem; font-weight: 800; letter-spacing: .13em; }
+h1, h2 { margin: 0; letter-spacing: -.035em; }
+h1 { font-size: clamp(2rem, 5vw, 4.25rem); line-height: 1; }
+h2 { font-size: clamp(1.35rem, 2.5vw, 2rem); }
+.lede { max-width: 720px; margin: 16px 0 0; color: var(--muted); font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.55; }
+.snapshot { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 20px; color: var(--muted); font-size: .82rem; }
+.status-pill { padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; color: var(--text); background: var(--surface); }
+.status-pill.live { border-color: rgba(104, 221, 202, .55); color: var(--accent); }
+.status-pill.fallback { border-color: #9f7138; color: #ffc77d; }
+.coverage-grid, .controls-grid, .metrics-grid { display: grid; gap: 16px; }
+.coverage-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: clamp(30px, 5vw, 56px); }
+fieldset { min-width: 0; margin: 0; padding: 20px; border: 1px solid var(--border); border-radius: 18px; background: rgba(21, 27, 35, .78); }
+legend { padding: 0 6px; font-size: 1rem; font-weight: 750; }
+.field-hint { margin: 0 0 13px; color: var(--muted); font-size: .8rem; }
+.chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.chain-chip { min-height: 38px; padding: 7px 12px; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--muted); cursor: pointer; transition: background .15s ease, border-color .15s ease, color .15s ease; }
+.chain-chip:hover { border-color: var(--accent); color: var(--text); }
+.chain-chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+.chain-chip:focus-visible, input:focus-visible { outline: 3px solid rgba(104, 221, 202, .38); outline-offset: 3px; }
+.controls-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 16px; }
+.range-control { display: grid; gap: 14px; padding: 18px 20px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); font-size: .9rem; font-weight: 700; }
+.range-control span { display: flex; justify-content: space-between; gap: 12px; }
+.range-control output { color: var(--accent); white-space: nowrap; }
+input[type="range"] { width: 100%; height: 24px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.metrics-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 16px; }
+.metric-card { min-width: 0; padding: 20px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); }
+.metric-card p { margin: 0 0 8px; color: var(--muted); font-size: .86rem; }
+.metric-card strong { display: block; overflow-wrap: anywhere; font-size: clamp(1.55rem, 3vw, 2.35rem); line-height: 1.08; }
+.metric-card span { display: block; margin-top: 7px; color: var(--muted); font-size: .82rem; line-height: 1.4; }
+.accent-card { border-color: rgba(104, 221, 202, .55); background: linear-gradient(145deg, var(--accent-soft), var(--surface)); }
+.chart-card { margin-top: 16px; padding: clamp(18px, 3vw, 28px); border: 1px solid var(--border); border-radius: 22px; background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+.chart-heading { display: flex; justify-content: space-between; gap: 20px; align-items: flex-end; }
+.chart-heading > p { margin: 0; color: var(--muted); font-size: .82rem; white-space: nowrap; }
+#sankey { display: block; width: 100%; height: auto; margin-top: 20px; overflow: visible; }
+.chart-empty { min-height: 220px; place-items: center; color: var(--muted); text-align: center; }
+.chart-empty:not([hidden]) { display: grid; }
+.method-note { margin: 16px 0 0; color: var(--muted); font-size: .75rem; line-height: 1.5; }
+.tooltip { position: fixed; z-index: 10; max-width: 250px; padding: 9px 11px; border: 1px solid var(--border); border-radius: 9px; background: #0a0e13; color: #fff; box-shadow: 0 12px 35px rgba(0, 0, 0, .38); pointer-events: none; font-size: .76rem; line-height: 1.45; }
+
+@media (max-width: 760px) {
+  .site-shell { padding-top: 24px; }
+  .coverage-grid, .controls-grid { grid-template-columns: 1fr; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; }
+  .metric-card:last-child { grid-column: 1 / -1; }
+  .chart-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .chart-heading > p { white-space: normal; }
+  fieldset, .range-control, .metric-card { border-radius: 14px; }
+}
+
+@media (max-width: 480px) {
+  .site-shell { padding-inline: 14px; }
+  .snapshot { display: grid; gap: 7px; }
+  .coverage-grid { margin-top: 28px; }
+  fieldset { padding: 16px; }
+  .chain-chip { min-height: 36px; padding: 6px 10px; font-size: .88rem; }
+  .metrics-grid { grid-template-columns: 1fr; }
+  .metric-card:last-child { grid-column: auto; }
+  .chart-card { padding: 16px 10px; }
+  .chart-heading, .method-note { padding-inline: 4px; }
+}
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+
+@media (prefers-color-scheme: light) {
+  :root { color-scheme: light; --bg: #f4f7fa; --surface: #ffffff; --border: #d4dde6; --text: #14202c; --muted: #5e6b78; --accent: #087f72; --accent-soft: rgba(8, 127, 114, .1); --side-node: #7a8793; --shadow: 0 24px 70px rgba(29, 48, 67, .1); }
+  body { background: radial-gradient(circle at 12% 0%, rgba(8, 127, 114, .09), transparent 30rem), var(--bg); }
+}
